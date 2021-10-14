@@ -1,6 +1,6 @@
 const InputField = ({field}) => (
     <div>
-        {field.title}: 
+        {`${field.title}: `} 
         <input 
           value={field.value}
           onChange={field.changeHandler}  
