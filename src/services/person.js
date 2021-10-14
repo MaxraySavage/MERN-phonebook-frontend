@@ -9,9 +9,14 @@ const create = newObject => {
   return axios.post(baseUrl, newObject).then(response => response.data)
 }  
 
+const deleteEntry = id => {
+  return axios.delete(`${baseUrl}/${id}`).then(response => response.data)
+}
+
 const personService = {
     getAll, 
-    create
+    create,
+    deleteEntry
 }
 
 export default personService;

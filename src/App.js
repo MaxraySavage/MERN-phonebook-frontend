@@ -11,8 +11,6 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('');
   const [ filterStr, setFilterStr ] = useState('');
 
-  const baseUrl = 'http://localhost:3001';
-
   useEffect(() => {
     personService
       .getAll()
@@ -40,7 +38,16 @@ const App = () => {
       setNewNumber('');
       });
   }
-  
+
+  const deleteEntryOf = (id) => {
+    const deleteConsent = window.confirm(`Delete ${persons.find((person)=>person.id === id).name}?`)
+    if(!deleteConsent) return;
+    personService
+      .deleteEntry(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -81,7 +88,7 @@ const App = () => {
       <PersonForm submitHandler={addEntry} fields={fields} />
       <h2>Contacts</h2>
       <InputField field={filterField}/>
-      <PersonList persons={personsToShow} />
+      <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} />
       
     </div>
   )

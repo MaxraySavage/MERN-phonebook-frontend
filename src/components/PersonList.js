@@ -1,8 +1,9 @@
-const PersonList = ({persons}) => (
+const PersonList = ({persons, deleteEntryOf}) => (
     <ul>
         {persons.map((person) => (
-          <li key={person.name}>
-            {person.name} {person.number}   
+          <li key={person.id}>
+            {person.name} {person.number} 
+            <button onClick={() => deleteEntryOf(person.id)}>Delete</button>  
           </li>
         ))}
     </ul>
