@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import personService from './services/person'
+import personService from './services/personService'
 import PersonForm from './components/PersonForm'
 import InputField from './components/InputField'
 import PersonList from './components/PersonList'
@@ -22,7 +22,26 @@ const App = () => {
   const addEntry = (event) => {
     event.preventDefault();
     if(persons.some((person) => person.name === newName)) {
-      alert(`${newName} has already been added to the phonebook`);
+      const oldEntry = persons.find((person)=> person.name === newName);
+      if(oldEntry.number === newNumber) {
+        alert(`${newName} has already been added to the phonebook`);
+        return;
+      } 
+      const updateConsent = window.confirm(`${newName} is already in the phonebook, would you like to replace their old one with the new one?`)
+      if(!updateConsent) return;
+      const updatedEntry = {
+        name: newName,
+        number: newNumber
+      }
+      personService
+        .update(oldEntry.id, updatedEntry)
+        .then(updatedPerson => {
+          setPersons(persons.map((person) => {
+            return person.id === updatedPerson.id ? updatedPerson : person;
+          }));
+          setNewName('');
+          setNewNumber('');
+        })
       return;
     }
     const newEntry = {
@@ -33,9 +52,9 @@ const App = () => {
     personService
       .create(newEntry)
       .then(newPerson => {
-      setPersons(persons.concat(newPerson));
-      setNewName('');
-      setNewNumber('');
+        setPersons(persons.concat(newPerson));
+        setNewName('');
+        setNewNumber('');
       });
   }
 
