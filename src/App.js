@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import personService from './services/person'
 import PersonForm from './components/PersonForm'
 import InputField from './components/InputField'
 import PersonList from './components/PersonList'
-import axios from 'axios'
+
 
 const App = () => {
   const [ persons, setPersons ] = useState([]); 
@@ -13,11 +14,10 @@ const App = () => {
   const baseUrl = 'http://localhost:3001';
 
   useEffect(() => {
-    axios
-      .get(`${baseUrl}/persons`)
-      .then( response => setPersons(response.data))
+    personService
+      .getAll()
+      .then( initalPersons => setPersons(initalPersons))
   }, []);
-
 
   const personsToShow = persons.filter((person) => person.name.toLowerCase().indexOf(filterStr.toLowerCase()) !== -1);
 
@@ -32,14 +32,15 @@ const App = () => {
       number: newNumber
     }
 
-    axios
-    .post(`${baseUrl}/persons`, newEntry)
-    .then(response => {
-      setPersons(persons.concat(response.data));
+    personService
+      .create(newEntry)
+      .then(newPerson => {
+      setPersons(persons.concat(newPerson));
       setNewName('');
       setNewNumber('');
-    })
+      });
   }
+  
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
