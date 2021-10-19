@@ -1,8 +1,11 @@
+import './index.css'
+
 import React, { useEffect, useState } from 'react'
 import personService from './services/personService'
 import PersonForm from './components/PersonForm'
 import InputField from './components/InputField'
 import PersonList from './components/PersonList'
+import Message from './components/Message'
 
 
 const App = () => {
@@ -10,6 +13,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filterStr, setFilterStr ] = useState('');
+  const [ message, setMessage ] = useState('');
+  const [ messageType, setMessageType ] = useState('');
 
   useEffect(() => {
     personService
@@ -39,8 +44,19 @@ const App = () => {
           setPersons(persons.map((person) => {
             return person.id === updatedPerson.id ? updatedPerson : person;
           }));
+          setMessage(`${updatedPerson.name}'s number updated`);
+          setMessageType('success');
+          setTimeout(()=>{
+            setMessage(null)
+          }, 3000);
           setNewName('');
           setNewNumber('');
+        }).catch(()=>{
+          setMessage(`Unable to update ${newName}. Person not found in database.`);
+          setMessageType('error');
+          setTimeout(()=>{
+            setMessage(null)
+          }, 3000);
         })
       return;
     }
@@ -53,6 +69,11 @@ const App = () => {
       .create(newEntry)
       .then(newPerson => {
         setPersons(persons.concat(newPerson));
+        setMessage(`${newPerson.name} successfully added`);
+        setMessageType('success');
+        setTimeout(()=>{
+          setMessage(null)
+        }, 3000);
         setNewName('');
         setNewNumber('');
       });
@@ -65,6 +86,12 @@ const App = () => {
       .deleteEntry(id)
       .then(() => {
         setPersons(persons.filter(person => person.id !== id))
+      }).catch(()=>{
+        setMessage(`Unable to delete ${persons.find((person)=>person.id === id).name}. Person not found.`);
+        setMessageType('error');
+        setTimeout(()=>{
+          setMessage(null)
+        }, 3000);
       })
   }
 
@@ -104,6 +131,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Message message={message} messageType={messageType}/>
       <PersonForm submitHandler={addEntry} fields={fields} />
       <h2>Contacts</h2>
       <InputField field={filterField}/>
