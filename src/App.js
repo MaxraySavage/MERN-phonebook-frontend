@@ -24,6 +24,14 @@ const App = () => {
 
   const personsToShow = persons.filter((person) => person.name.toLowerCase().indexOf(filterStr.toLowerCase()) !== -1);
 
+  const displayMessage = (message, type) => {
+    setMessage(message);
+    setMessageType(type);
+    setTimeout(()=>{
+      setMessage(null)
+    }, 3000);
+  }
+
   const addEntry = (event) => {
     event.preventDefault();
     if(persons.some((person) => person.name === newName)) {
@@ -51,12 +59,9 @@ const App = () => {
           }, 3000);
           setNewName('');
           setNewNumber('');
-        }).catch(()=>{
-          setMessage(`Unable to update ${newName}. Person not found in database.`);
-          setMessageType('error');
-          setTimeout(()=>{
-            setMessage(null)
-          }, 3000);
+        }).catch((error)=>{
+          let messageText = error.response.data.error;
+          displayMessage(messageText, 'error')
         })
       return;
     }
@@ -76,6 +81,10 @@ const App = () => {
         }, 3000);
         setNewName('');
         setNewNumber('');
+      })
+      .catch(error => {
+        const messageText = error.response.data.error
+        displayMessage(messageText, 'error')
       });
   }
 
@@ -86,12 +95,9 @@ const App = () => {
       .deleteEntry(id)
       .then(() => {
         setPersons(persons.filter(person => person.id !== id))
-      }).catch(()=>{
-        setMessage(`Unable to delete ${persons.find((person)=>person.id === id).name}. Person not found.`);
-        setMessageType('error');
-        setTimeout(()=>{
-          setMessage(null)
-        }, 3000);
+      }).catch((error)=>{
+        const messageText = error.response.data.error
+        displayMessage(messageText, 'error')
       })
   }
 
