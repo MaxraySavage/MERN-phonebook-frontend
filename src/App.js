@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     personService
       .getAll()
-      .then( initalPersons => setPersons(initalPersons))
+      .then( initialPersons => setPersons(initialPersons))
   }, []);
 
   const personsToShow = persons.filter((person) => person.name.toLowerCase().indexOf(filterStr.toLowerCase()) !== -1);
