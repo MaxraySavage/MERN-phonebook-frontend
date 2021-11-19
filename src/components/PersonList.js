@@ -1,14 +1,29 @@
+import { Table } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 
 const PersonList = ({persons, deleteEntryOf}) => (
-    <ul>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
         {persons.map((person) => (
-          <li key={person.id}>
-            {person.name} {person.number} 
-            <Button variant="outline-danger" size="sm" onClick={() => deleteEntryOf(person.id)}>Delete</Button>  
-          </li>
+          <tr key={person.id}>
+            <td>{person.name}</td>
+            <td>{person.number} </td>
+            <td>
+              <Button variant="outline-danger" size="sm" onClick={() => deleteEntryOf(person.id)}>
+                <i className="bi bi-x"></i>Delete
+              </Button>  
+            </td>
+          </tr>
         ))}
-    </ul>
+      </tbody>
+    </Table>
 )
 
 export default PersonList
