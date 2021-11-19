@@ -16,7 +16,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('');
   const [ newNumber, setNewNumber ] = useState('');
   const [ filterStr, setFilterStr ] = useState('');
-  const [ message, setMessage ] = useState('');
+  const [ message, setMessage ] = useState(null);
   const [ messageType, setMessageType ] = useState('');
 
   useEffect(() => {
@@ -55,16 +55,13 @@ const App = () => {
           setPersons(persons.map((person) => {
             return person.id === updatedPerson.id ? updatedPerson : person;
           }));
-          setMessage(`${updatedPerson.name}'s number updated`);
-          setMessageType('success');
-          setTimeout(()=>{
-            setMessage(null)
-          }, 3000);
+          let messageText = `${updatedPerson.name}'s number updated`
+          displayMessage(messageText, 'success')
           setNewName('');
           setNewNumber('');
         }).catch((error)=>{
           let messageText = error.response.data.error;
-          displayMessage(messageText, 'error')
+          displayMessage(messageText, 'danger')
         })
       return;
     }
@@ -77,17 +74,14 @@ const App = () => {
       .create(newEntry)
       .then(newPerson => {
         setPersons(persons.concat(newPerson));
-        setMessage(`${newPerson.name} successfully added`);
-        setMessageType('success');
-        setTimeout(()=>{
-          setMessage(null)
-        }, 3000);
+        let messageText = `${newPerson.name} successfully added`
+        displayMessage(messageText, 'success')
         setNewName('');
         setNewNumber('');
       })
       .catch(error => {
         const messageText = error.response.data.error
-        displayMessage(messageText, 'error')
+        displayMessage(messageText, 'danger')
       });
   }
 
@@ -100,7 +94,7 @@ const App = () => {
         setPersons(persons.filter(person => person.id !== id))
       }).catch((error)=>{
         const messageText = error.response.data.error
-        displayMessage(messageText, 'error')
+        displayMessage(messageText, 'danger')
       })
   }
 
