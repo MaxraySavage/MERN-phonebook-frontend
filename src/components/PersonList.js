@@ -1,9 +1,11 @@
+import Button from 'react-bootstrap/Button';
+
 const PersonList = ({persons, deleteEntryOf}) => (
     <ul>
         {persons.map((person) => (
           <li key={person.id}>
             {person.name} {person.number} 
-            <button onClick={() => deleteEntryOf(person.id)}>Delete</button>  
+            <Button variant="outline-danger" size="sm" onClick={() => deleteEntryOf(person.id)}>Delete</Button>  
           </li>
         ))}
     </ul>

@@ -138,7 +138,8 @@ const App = () => {
   const filterField = {
     title: 'Search',
     value: filterStr,
-    changeHandler: handleFilterStrChange
+    changeHandler: handleFilterStrChange,
+    type: 'text',
   }
 
   return (
