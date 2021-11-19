@@ -116,24 +116,24 @@ const App = () => {
     setFilterStr(event.target.value);
   }
 
-  const fields = [
-    {
+  const fields = {
+    name: {
       id: 1,
-      title: 'name',
+      title: 'Name',
       value: newName,
       changeHandler: handleNameChange,
       type: 'text',
-      placeholder: 'Contact Name'
+      placeholder: 'Enter Contact Name'
     },
-    {
+    number: {
       id: 2,
-      title: 'number',
+      title: 'Number',
       value: newNumber,
       changeHandler: handleNumberChange,
       type: 'text',
-      placeholder: 'Phone Number'
+      placeholder: 'Enter Phone Number'
     }
-  ]
+  }
 
   const filterField = {
     title: 'Search',
