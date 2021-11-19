@@ -1,15 +1,19 @@
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import InputField from './InputField'
 
 const PersonForm = ({ submitHandler, fields }) => {
   return(
-    <form onSubmit={submitHandler}>
+    <Form onSubmit={submitHandler}>
       {fields.map((field) => (
-        <InputField key={field.id} field={field} />
+        <>
+          <InputField key={field.id} field={field} />
+        </>
       ))}
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
+      
+        <Button type="submit">Add</Button>
+      
+    </Form>
   )
 }
 

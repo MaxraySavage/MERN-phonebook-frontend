@@ -1,6 +1,9 @@
 import './index.css'
 
 import React, { useEffect, useState } from 'react'
+
+import Container from 'react-bootstrap/Container';
+
 import personService from './services/personService'
 import PersonForm from './components/PersonForm'
 import InputField from './components/InputField'
@@ -118,13 +121,17 @@ const App = () => {
       id: 1,
       title: 'name',
       value: newName,
-      changeHandler: handleNameChange
+      changeHandler: handleNameChange,
+      type: 'text',
+      placeholder: 'Contact Name'
     },
     {
       id: 2,
       title: 'number',
       value: newNumber,
-      changeHandler: handleNumberChange
+      changeHandler: handleNumberChange,
+      type: 'text',
+      placeholder: 'Phone Number'
     }
   ]
 
@@ -135,7 +142,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Container >
       <h2>Phonebook</h2>
       <Message message={message} messageType={messageType}/>
       <PersonForm submitHandler={addEntry} fields={fields} />
@@ -143,7 +150,7 @@ const App = () => {
       <InputField field={filterField}/>
       <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} />
       
-    </div>
+    </Container>
   )
 }
 
