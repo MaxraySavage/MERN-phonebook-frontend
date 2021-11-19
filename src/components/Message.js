@@ -1,12 +1,15 @@
+import { Alert } from "react-bootstrap";
+
 const Message = ({message, messageType}) => {
     if (message === null) {
         return null;
     }
 
     return(
-        <div className={messageType}>
+        <Alert variant={messageType}>
             {message}
-        </div>
+        </Alert>
+        
     )
 }
 
