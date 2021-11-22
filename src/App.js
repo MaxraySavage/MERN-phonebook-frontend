@@ -2,6 +2,11 @@ import './index.css'
 
 import React, { useEffect, useState } from 'react'
 
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from "react-router-dom"
+
 import Container from 'react-bootstrap/Container';
 
 import personService from './services/personService'
@@ -24,11 +29,6 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    personService
-      .getAll()
-      .then( initialPersons => setPersons(initialPersons))
-  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedPhonebookAppUser')
@@ -38,6 +38,12 @@ const App = () => {
       personService.setToken(user.token)
     }
   }, [])
+
+  useEffect(() => {
+    personService
+      .getAll()
+      .then( initialPersons => setPersons(initialPersons))
+  }, []);
 
   const personsToShow = persons.filter((person) => person.name.toLowerCase().indexOf(filterStr.toLowerCase()) !== -1);
 
@@ -94,6 +100,7 @@ const App = () => {
         setNewNumber('');
       })
       .catch(error => {
+        console.log(error)
         const messageText = error.response.data.error
         displayMessage(messageText, 'danger')
       });
@@ -193,15 +200,48 @@ const App = () => {
     type: 'text',
   }
 
+  const padding = { padding: 5 }
+
   return (
     <Container >
+      <Router>
+        <div>
+          <Link style={padding} to="/">home</Link>
+          <Link style={padding} to="/contacts">contacts</Link>
+          {user
+            ? <em>{user.username} logged in</em>
+            : <Link style={padding} to="/login">login</Link>
+          }
+        </div>
+        <Message message={message} messageType={messageType}/>
+        <Switch>
+          <Route path="/contacts/add">
+            <PersonForm submitHandler={addEntry} fields={newContactFields} />
+          </Route>
+          <Route path="/contacts">
+            <h2>Contacts</h2>
+            <InputField field={filterField}/>
+            <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} />
+          </Route>
+          <Route path="/login">
+            <LoginForm submitHandler={handleLogin} fields={loginFields}/>
+          </Route>
+          <Route path="/">
+          </Route>
+        </Switch>
+      </Router>   
+
+
+
+
+{/* 
       <LoginForm submitHandler={handleLogin} fields={loginFields}/>
       <h2>Phonebook</h2>
       <Message message={message} messageType={messageType}/>
       <PersonForm submitHandler={addEntry} fields={newContactFields} />
       <h2>Contacts</h2>
       <InputField field={filterField}/>
-      <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} />
+      <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} /> */}
       
     </Container>
   )
