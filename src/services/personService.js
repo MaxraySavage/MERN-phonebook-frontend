@@ -1,20 +1,38 @@
 import axios from "axios";
 const baseUrl = '/api/contacts';
 
+let token = null
+
+const setToken = newToken => {
+  token = `bearer ${newToken}`
+}
+
 const getAll = () => {
-    return axios.get(baseUrl).then(response => response.data)
+  const config = {
+    headers: { Authorization: token },
+  }
+    return axios.get(baseUrl, config).then(response => response.data)
   }
 
 const create = newObject => {
-  return axios.post(baseUrl, newObject).then(response => response.data)
+  const config = {
+    headers: { Authorization: token },
+  }
+  return axios.post(baseUrl, newObject, config).then(response => response.data)
 }  
 
 const deleteEntry = id => {
-  return axios.delete(`${baseUrl}/${id}`).then(response => response.data)
+  const config = {
+    headers: { Authorization: token },
+  }
+  return axios.delete(`${baseUrl}/${id}`, config).then(response => response.data)
 }
 
 const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.put(`${baseUrl}/${id}`, newObject, config)
   return request.then(response => response.data)
 }
 
@@ -22,7 +40,8 @@ const personService = {
     getAll, 
     create,
     deleteEntry,
-    update
+    update,
+    setToken,
 }
 
 export default personService;
