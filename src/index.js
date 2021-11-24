@@ -3,9 +3,13 @@ import App from './App'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import { BrowserRouter as Router } from 'react-router-dom'
+ 
 
 ReactDOM.render(
-  <App />, 
+  <Router >
+    <App />
+  </Router>
+  , 
   document.getElementById('root')
 )

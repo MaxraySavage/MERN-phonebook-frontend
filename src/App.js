@@ -3,8 +3,7 @@ import './index.css'
 import React, { useEffect, useState } from 'react'
 
 import {
-  BrowserRouter as Router,
-  Switch, Route, Link
+  Switch, Route, Link, Redirect
 } from "react-router-dom"
 
 import Container from 'react-bootstrap/Container';
@@ -16,6 +15,10 @@ import InputField from './components/InputField'
 import PersonList from './components/PersonList'
 import Message from './components/Message'
 import LoginForm from './components/LoginForm';
+import AppNavBar from './components/AppNavBar';
+import { changeHandler } from './helper/helper';
+import SignupPage from './pages/SignupPage/SignupPage';
+import EditContactPage from './pages/EditContactPage/EditContactPage';
 
 
 const App = () => {
@@ -43,7 +46,7 @@ const App = () => {
     personService
       .getAll()
       .then( initialPersons => setPersons(initialPersons))
-  }, []);
+  }, [user]);
 
   const personsToShow = persons.filter((person) => person.name.toLowerCase().indexOf(filterStr.toLowerCase()) !== -1);
 
@@ -57,34 +60,7 @@ const App = () => {
 
   const addEntry = (event) => {
     event.preventDefault();
-    if(persons.some((person) => person.name === newName)) {
-      const oldEntry = persons.find((person)=> person.name === newName);
-      if(oldEntry.number === newNumber) {
-        alert(`${newName} has already been added to the phonebook`);
-        return;
-      } 
-      const updateConsent = window.confirm(`${newName} is already in the phonebook, would you like to replace their old one with the new one?`)
-      if(!updateConsent) return;
-      const updatedEntry = {
-        name: newName,
-        number: newNumber
-      }
-      personService
-        .update(oldEntry.id, updatedEntry)
-        .then(updatedPerson => {
-          setPersons(persons.map((person) => {
-            return person.id === updatedPerson.id ? updatedPerson : person;
-          }));
-          let messageText = `${updatedPerson.name}'s number updated`
-          displayMessage(messageText, 'success')
-          setNewName('');
-          setNewNumber('');
-        }).catch((error)=>{
-          let messageText = error.response.data.error;
-          displayMessage(messageText, 'danger')
-        })
-      return;
-    }
+    
     const newEntry = {
       name: newName,
       number: newNumber
@@ -119,12 +95,6 @@ const App = () => {
       })
   }
 
-  const valueChangeHandler = (setValue) => {
-    return (event) => {
-      setValue(event.target.value)
-    }
-  }
-
   const handleNameChange = (event) => {
     setNewName(event.target.value);
   }
@@ -151,10 +121,15 @@ const App = () => {
       setUser(userInfo)
       setUsername('')
       setPassword('')
-      personService.setToken(userInfo.token)
     } catch (exception) {
       displayMessage('Wrong Credentials', 'danger')
     }
+  }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedPhonebookAppUser')
+    setUser(null)
+    setPersons([])
   }
 
   const newContactFields = {
@@ -180,14 +155,14 @@ const App = () => {
     username: {
       title: 'Username',
       value: username,
-      changeHandler: valueChangeHandler(setUsername),
+      changeHandler: changeHandler(setUsername),
       type: 'text',
       placeholder: 'Enter your user name'
     },
     password: {
       title: 'Password',
       value: password,
-      changeHandler: valueChangeHandler(setPassword),
+      changeHandler: changeHandler(setPassword),
       type: 'password',
       placeholder: 'Enter your password'
     }
@@ -204,21 +179,38 @@ const App = () => {
 
   return (
     <Container >
-      <Router>
+        {/* {
+          user
+          ? <AppNavBar user= {user} />
+          : null
+        } */}
         <div>
           <Link style={padding} to="/">home</Link>
           <Link style={padding} to="/contacts">contacts</Link>
-          {user
-            ? <em>{user.username} logged in</em>
+          <Link style={padding} to="/contacts/add">add contacts</Link>
+          
+          { user && <em>{user.username} logged in</em> 
+          }
+          {
+            user ? <Link style={padding} to="/login" onClick={handleLogout}>logout</Link>
             : <Link style={padding} to="/login">login</Link>
           }
-        </div>
+          
+    </div>
         <Message message={message} messageType={messageType}/>
         <Switch>
+          <Route path="/signup">
+            <SignupPage />
+          </Route>
+          <Route path="/contacts/edit/:id">
+            <EditContactPage personService={personService} displayMessage={displayMessage} persons={persons} setPersons={setPersons}/>
+          </Route>
           <Route path="/contacts/add">
+          {!user ? <Redirect to="/login" /> : null}
             <PersonForm submitHandler={addEntry} fields={newContactFields} />
           </Route>
           <Route path="/contacts">
+          {!user ? <Redirect to="/login" /> : null}
             <h2>Contacts</h2>
             <InputField field={filterField}/>
             <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} />
@@ -227,22 +219,11 @@ const App = () => {
             <LoginForm submitHandler={handleLogin} fields={loginFields}/>
           </Route>
           <Route path="/">
+          {!user 
+            ? <Redirect to="/login" /> 
+            : <Redirect to="/contacts" />}
           </Route>
         </Switch>
-      </Router>   
-
-
-
-
-{/* 
-      <LoginForm submitHandler={handleLogin} fields={loginFields}/>
-      <h2>Phonebook</h2>
-      <Message message={message} messageType={messageType}/>
-      <PersonForm submitHandler={addEntry} fields={newContactFields} />
-      <h2>Contacts</h2>
-      <InputField field={filterField}/>
-      <PersonList persons={personsToShow} deleteEntryOf={deleteEntryOf} /> */}
-      
     </Container>
   )
 }
